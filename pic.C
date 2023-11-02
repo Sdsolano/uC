@@ -1,6 +1,6 @@
 /* 
- * File:   Licitacion_2c.c 
- * Author: Kbarrios3
+ * File: pic.c 
+ * Author: Sdsolano
  * 
  * 
  */
