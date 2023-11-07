@@ -1,6 +1,6 @@
 /* 
- * File: pic.c 
- * Author: Sdsolano
+ * File:   Licitacion_2c.c 
+ * Author: Kbarrios3
  * 
  * 
  */
@@ -90,15 +90,55 @@ void pasos_izquierda(void){
     
     int piso=1;
     void subir_un_piso(void){
-        for (int i=1;i<=925;i++){
+        for (int i=1;i<=650;i++){
             pasos_izquierda(); 
         }    
     }
     
     void bajar_un_piso(void){
-        for (int i=1;i<=925;i++){
+        for (int i=1;i<=650;i++){
            pasos_derecha(); 
         }           
+    }
+    
+    void set_speed(uint16_t speed){
+        CCPR1L=(speed>>2);
+        CCP1CON = (CCP1CON & 0xCF) | ((speed & 0x03)<<4);
+    }
+    
+    
+    void abrir_puerta(void){
+        PORTBbits.RB0=1;
+        PORTBbits.RB1=0;
+    }
+
+    void cerrar_puerta(void){
+        PORTBbits.RB0=0;
+        PORTBbits.RB1=1;
+    }    
+    
+    void parar_puerta(void){
+        PORTBbits.RB0=0;
+        PORTBbits.RB1=0; 
+    }
+    
+    
+    void PWM_init(void){
+        PR2=249;
+        CCP1CON=0x0C;
+        T2CON=0x06;
+    }
+    
+    void en_piso(void){
+        abrir_puerta();
+        set_speed(350);
+        __delay_ms(300);
+        parar_puerta();
+        __delay_ms(2000);
+        cerrar_puerta();
+        set_speed(350);
+        __delay_ms(300);
+        parar_puerta();
     }
     
     
@@ -111,39 +151,42 @@ void main(void) {
     TRISA = 0x00; //todos son inputs 
     TRISB = 0x00; // Todo salidas 
     TRISC = 0x00; // Todo salidas 
-    TRISD = 0xFF; // Todo salidas pulsadores 
+    TRISD = 0xFF; // Todo entradas pulsadores 
     TRISE = 0x00; // Todo salidas 
 
     ADCON0 = 0x00; //Activar el ADC 
     ADCON1 = 0x06; 
-
-
+    
+    piso=1;
 
     
+    PWM_init();
     
     while (1) {
         
-        
+        parar_puerta();
         pasos_off();
         if (piso==1){
             if(PORTDbits.RD0==1){
                 subir_un_piso();
+                en_piso();
                 piso=2;
             }
             if(PORTDbits.RD1==1){
                 subir_un_piso();
                 subir_un_piso();
+                en_piso();
                 piso=3;
             }
             if(PORTDbits.RD2==1){
                 subir_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 bajar_un_piso();
                 piso=1;
             }
             if(PORTDbits.RD3==1){
                 subir_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 subir_un_piso();
                 piso=3;
             }
@@ -151,14 +194,14 @@ void main(void) {
             if(PORTDbits.RD4==1){
                 subir_un_piso();
                 subir_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 bajar_un_piso();
                 piso=2;
             }
             if(PORTDbits.RD5==1){
                 subir_un_piso();
                 subir_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 bajar_un_piso();
                 bajar_un_piso();
                 piso=1;
@@ -174,39 +217,45 @@ void main(void) {
         if (piso==2){
             if(PORTDbits.RD0==1){
                  bajar_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 subir_un_piso();
                 piso=2;
+                en_piso();
             }
             if(PORTDbits.RD1==1){
                 bajar_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 subir_un_piso();
                 subir_un_piso();
                 piso=3;
+                en_piso();
             } 
 
             if(PORTDbits.RD2==1){
                 bajar_un_piso();
                 piso=1;
+                en_piso();
             }
             if(PORTDbits.RD3==1){
                 subir_un_piso();
                 piso=3;
+                en_piso();
             }
             
             if(PORTDbits.RD4==1){
                 subir_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 bajar_un_piso();
                 piso=2;
+                en_piso();
             }
             if(PORTDbits.RD5==1){
                 subir_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 bajar_un_piso();
                 bajar_un_piso();
                 piso=1;
+                en_piso();
             } 
             
             
@@ -222,40 +271,46 @@ void main(void) {
             if(PORTDbits.RD0==1){
                 bajar_un_piso();
                 bajar_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 subir_un_piso();
                 piso=2;
+                en_piso();
             }
             if(PORTDbits.RD1==1){
                 bajar_un_piso();
                 bajar_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 subir_un_piso();
                 subir_un_piso();
                 piso=3;
+                en_piso();
             }
             
             if(PORTDbits.RD2==1){
                 bajar_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 bajar_un_piso();
                 piso=1;
+                en_piso();
             }
             
             if(PORTDbits.RD3==1){
                 bajar_un_piso();
-                __delay_ms(2000);
+                en_piso();
                 subir_un_piso();
                 piso=3;
+                en_piso();
             } 
             if(PORTDbits.RD4==1){
                 bajar_un_piso();
                 piso=2;
+                en_piso();
             }
             if(PORTDbits.RD5==1){
                 bajar_un_piso();
                 bajar_un_piso();
                 piso=1;
+                en_piso();  
             } 
         }
         
